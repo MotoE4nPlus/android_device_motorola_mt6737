@@ -1,0 +1,139 @@
+# Architecture
+FORCE_32_BIT := true
+
+# Platform
+TARGET_BOARD_PLATFORM := mt6737m
+TARGET_NO_BOOTLOADER := true
+
+# Architecture
+ifeq ($(FORCE_32_BIT),true)
+TARGET_ARCH := arm
+TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_CPU_ABI := armeabi-v7a
+TARGET_CPU_ABI2 := armeabi
+TARGET_CPU_VARIANT := cortex-a53
+else
+TARGET_ARCH := arm64
+TARGET_ARCH_VARIANT := armv8-a
+TARGET_CPU_ABI := arm64-v8a
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := cortex-a53
+
+TARGET_2ND_ARCH := arm
+TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_CPU_ABI := armeabi-v7a
+TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_CPU_VARIANT := cortex-a53
+
+TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI)
+TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI),$(TARGET_2ND_CPU_ABI2)
+TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT),$(TARGET_CPU_ABI_LIST_32_BIT)
+endif
+
+# Bootloader
+TARGET_BOOTLOADER_BOARD_NAME := mt6737m
+
+# Recovery
+TARGET_USERIMAGES_USE_EXT4 := true
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+
+TARGET_KMODULES := true
+
+# Disable memcpy opt (for audio libraries)
+TARGET_CPU_MEMCPY_OPT_DISABLE := true
+
+# Flags
+BOARD_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
+BOARD_GLOBAL_CFLAGS += -DDISABLE_HW_ID_MATCH_CHECK
+
+# Graphics
+BOARD_EGL_CFG := device/motorola/mt6737/configs/egl.cfg
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+USE_OPENGL_RENDERER := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+MTK_HWC_SUPPORT := yes
+MTK_HWC_VERSION := 1.4.1
+MTK_GPU_VERSION := mali midgard r7p0
+
+# Mediatek support
+BOARD_USES_MTK_HARDWARE:=true
+
+# Camera
+USE_CAMERA_STUB := true
+
+# Boot animation
+TARGET_BOOTANIMATION_MULTITHREAD_DECODE := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := true
+
+# Audio
+BOARD_USES_MTK_AUDIO := true
+
+# CMHW
+BOARD_USES_CYANOGEN_HARDWARE := true
+BOARD_HARDWARE_CLASS := device/motorola/mt6737/cmhw
+
+# Fix video autoscaling on old OMX decoders
+TARGET_OMX_LEGACY_RESCALING := true
+
+# Charger
+BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
+
+# RIL
+BOARD_RIL_CLASS := ../../../device/motorola/mt6737/ril/
+
+# GPS
+BOARD_GPS_LIBRARIES :=true
+BOARD_CONNECTIVITY_MODULE := MT6625
+BOARD_MEDIATEK_USES_GPS := true
+
+# Wireless
+BOARD_WLAN_DEVICE := MediaTek
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_mt66xx
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_mt66xx
+WIFI_DRIVER_FW_PATH_PARAM := /dev/wmtWifi
+WIFI_DRIVER_FW_PATH_AP := AP
+WIFI_DRIVER_FW_PATH_STA := STA
+WIFI_DRIVER_FW_PATH_P2P := P2P
+WIFI_DRIVER_STATE_CTRL_PARAM := /dev/wmtWifi
+WIFI_DRIVER_STATE_ON := 1
+WIFI_DRIVER_STATE_OFF := 0
+
+# Enable Minikin text layout engine (will be the default soon)
+USE_MINIKIN := true
+
+# Charger
+BOARD_CHARGER_SHOW_PERCENTAGE := true
+
+# Fonts
+EXTENDED_FONT_FOOTPRINT := true
+
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+BOARD_BLUETOOTH_BDROID_HCILP_INCLUDED := 0
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/motorola/woods/bluetooth
+
+# Symbols for MediaTek
+TARGET_LDPRELOAD += libmt6737.so
+
+TARGET_SPECIFIC_HEADER_PATH := device/motorola/woods/include
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun/file
+
+ifneq ($(FORCE_32_BIT),yes)
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
+else
+PRODUCT_COPY_FILES += system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote64_32
+endif
+
+# Selinux Policy
+BOARD_SEPOLICY_DIRS := \
+       device/motorola/mt6737/sepolicy
+
+# Seccomp filter
+BOARD_SECCOMP_POLICY += device/motorola/mt6737/seccomp
+
